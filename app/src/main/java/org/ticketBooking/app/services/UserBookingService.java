@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jdi.PrimitiveValue;
 import org.ticketBooking.app.entity.Train;
 import org.ticketBooking.app.entity.User;
+import org.ticketBooking.app.util.UserServiceUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +18,7 @@ public class UserBookingService {
 
     private List<User> userList;
 
-    private ObjectMapper objextMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
     private static final String USER_PATH = "../localDB/users.json";
 
     //Constructor for user
@@ -32,13 +33,13 @@ public class UserBookingService {
 
     public List<User> laodUsers() throws IOException{
         File users = new File(USER_PATH);
-        return objextMapper.readValue(users, new TypeReference<List<User>>() {});
+        return objectMapper.readValue(users, new TypeReference<List<User>>() {});
     }
 
 
     public Boolean loginUser(){
         Optional<User> foundUser = userList.stream().filter(user1 -> {
-            return user1.getName().equals(user.getName()) && UserServiceUtil.checkPassword(user.getPassword(), user1.getHashedPassword());
+            return user1.getName().equals(user.getName()) && UserServiceUtil.checkPassowrd(user.getPassword(), user1.getHashedPassword());
         }).findFirst();
         return foundUser.isPresent();
     }
@@ -55,7 +56,7 @@ public class UserBookingService {
 
     private void saveUserListToFile() throws IOException{
         File userFile = new File(USER_PATH);
-        objextMapper.writeValue(userFile, userList);
+        objectMapper.writeValue(userFile, userList);
     }
 
     public void fetchBooking(){
@@ -67,11 +68,7 @@ public class UserBookingService {
     }
 
     public List<Train> getTrains(String source, String dest) throws IOException {
-        try{
-            TrainService trainService = new TrainService();
-            return trainService.searchTrains(source, dest);
-        }catch(IOException ex){
-            return new ArrayList<>();
-        }
+        TrainService trainService = new TrainService();
+        return trainService.searchTrains(source, dest);
     }
 }

@@ -23,6 +23,7 @@ public class App {
         System.out.println("Running Train Booking System");
         Scanner scanner = new Scanner(System.in);
         int option = 0;
+        boolean loginflag = false;
         UserBookingService userBookingService;
         try{
             userBookingService = new UserBookingService();
@@ -33,13 +34,18 @@ public class App {
 
         while(option!=7){
             System.out.println("Choose option");
-            System.out.println("1. Sign up");
-            System.out.println("2. Login");
-            System.out.println("3. Fetch Bookings");
-            System.out.println("4. Search Trains");
-            System.out.println("5. Book a Seat");
-            System.out.println("6. Cancel my Booking");
-            System.out.println("7. Exit the App");
+            if(!loginflag){
+                System.out.println("1. Sign up");
+                System.out.println("2. Login");
+            }
+            if(loginflag){
+                System.out.println("3. Fetch Bookings");
+                System.out.println("4. Search Trains");
+                System.out.println("5. Book a Seat");
+                System.out.println("6. Cancel my Booking");
+                System.out.println("7. Exit the App");
+                System.out.println("8. Logout");
+            }
             option = scanner.nextInt();
             Train trainSelectedForBooking = new Train();
             switch (option){
@@ -59,6 +65,7 @@ public class App {
                     User userToLogin = new User(nameToLogin, passwordToLogin, UserServiceUtil.hashPassword(passwordToLogin), new ArrayList<>(), UUID.randomUUID().toString());
                     try{
                         userBookingService = new UserBookingService(userToLogin);
+                        loginflag = true;
                     }catch (IOException ex){
                         return;
                     }
@@ -105,7 +112,12 @@ public class App {
                         System.out.println("Can't book this seat");
                     }
                     break;
+                case 8:
+                    System.out.println("Logging out... Thanks for using our service...");
+                    loginflag = false;
+                    break;
                 default:
+                    System.out.println("Enter a valid option.");
                     break;
             }
         }
